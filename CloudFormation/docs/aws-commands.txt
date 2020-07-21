@@ -1,0 +1,4 @@
+// Create Stack
+aws cloudformation create-stack --stack-name [Name] --template-body file://[File].yml --parameters ParameterKey=KeyPairName,ParameterValue=SampleKeyPair --region us-west-2
+
+aws cloudformation update-stack --stack-name SimpleStack --template-body file://templates/basic-ec2-sg.yml --parameters ParameterKey=InstanceType,ParameterValue=t2.micro ParameterKey=KeyName,ParameterValue=cotb-ssh-security-key ParameterKey=ServiceName,ParameterValue="Ec2 Instance from Template" ParameterKey=ConfigName,ParameterValue="agent-config.json" --region us-west-2 --capabilities CAPABILITY_IAM

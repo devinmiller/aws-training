@@ -1,1 +1,1 @@
-# Training.AWS
+# Amazon Web Services Training
