@@ -1,0 +1,110 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: A very basic EC2 instance with Steam CMD.
+Parameters:
+  InstanceType:
+    Type: String
+    Default: t2.micro
+    AllowedValues:
+      - t2.micro
+      - t3.small
+      - t3.medium
+    Description: 
+      EC2 Instance Type
+  KeyName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: Name of an existing EC2 KeyPair
+  ServiceName:
+    Type: String
+    Description: The name of the service.
+Mappings:
+  RegionMap:
+    us-west-2:
+      # Amazon Linux 2
+      AMI: ami-0b1e2eeb33ce3d66f
+    us-east-2:
+      # Amazon Linux 2
+      AMI: ami-0f7919c33c90f5b58
+Resources:
+  EC2Instance: 
+    Type: AWS::EC2::Instance
+    # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-helper-scripts-reference.html
+    Metadata:
+      AWS::CloudFormation::Init:
+        configSets:
+          default:
+            - 01_createUser
+            - 02_setUserShell
+            - 03_downloadFile
+            - 04_updateSteam
+        01_createUser:
+          users:
+            steam:
+              uid: "101"
+              homeDir: "/home/steam"
+        02_setUserShell:
+          commands:
+            01_runUsermod:
+              command: usermod --shell /bin/bash steam
+            02_makeHomeDir:
+              command: mkdir /home/steam
+            03_chownHomeDir:
+              command: chown steam:steam /home/steam
+            04_makeSSH:
+              command: mkdir /home/steam/.ssh
+            05_copySSH:
+              command: cp /home/ec2-user/.ssh/authorized_keys /home/steam/.ssh/authorized_keys
+            06_chownSSH:
+              command: chown steam:steam /home/steam/.ssh/authorized_keys
+        03_downloadFile:
+          sources:
+            /home/steam/steamcmd: "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz"
+        04_updateSteam:
+          commands:
+            01_runUpdate:
+              command: /home/steam/steamcmd/steamcmd.sh +login anonymous +quit
+    Properties:
+      KeyName: !Ref KeyName
+      ImageId: 
+        Fn::FindInMap:
+        - RegionMap
+        - !Ref AWS::Region
+        - AMI
+      InstanceType: !Ref InstanceType
+      BlockDeviceMappings:
+        - DeviceName: "/dev/xvda"
+          Ebs:
+            VolumeSize: 40
+      Tags:
+        - Key: "Name"
+          Value: !Ref ServiceName
+      SecurityGroups:
+        - !Ref BasicSecurityGroup
+      UserData: 
+        Fn::Base64:
+          !Sub |
+            #!/bin/bash -ex
+            yum update -y && yum install -y glibc.i686 libstdc++.i686
+            /opt/aws/bin/cfn-init -v --stack ${AWS::StackId} --resource EC2Instance --region ${AWS::Region} --configsets default
+            /opt/aws/bin/cfn-signal -e $? --stack ${AWS::StackId} --resource EC2Instance --region ${AWS::Region} 
+    # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-attribute-creationpolicy.html
+    CreationPolicy:
+      ResourceSignal:
+        Count: 1
+        Timeout: "PT15M"
+  BasicSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable SSH and SteamCMD access
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: udp
+          FromPort: 27000
+          ToPort: 27100
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 27000
+          ToPort: 27100
+          CidrIp: 0.0.0.0/0

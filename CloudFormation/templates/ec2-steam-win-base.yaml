@@ -1,0 +1,99 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: A very basic EC2 instance with Steam CMD.
+Parameters:
+  InstanceType:
+    Type: String
+    Default: t2.micro
+    AllowedValues:
+      - t2.micro
+      - t3.small
+      - t3.medium
+    Description: 
+      EC2 Instance Type
+  KeyName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: Name of an existing EC2 KeyPair
+  ServiceName:
+    Type: String
+    Description: The name of the service.
+    Default: SteamCMD Windows
+  VolumeSize:
+    Type: Number
+    Description: The size of the root volume
+    Default: "40"
+Mappings:
+  RegionMap:
+    us-west-2:
+      # Windows Server 2019 Base
+      AMI: ami-0c1ee26e489972734
+Resources:
+  EC2Instance: 
+    Type: AWS::EC2::Instance
+    # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-helper-scripts-reference.html
+    Metadata:
+      AWS::CloudFormation::Init:
+        configSets:
+          default:
+            - 01_createPath
+            - 02_downloadFile
+            - 03_updateSteam
+        01_createPath:
+          commands:
+            01-makeDir:
+              command: mkdir "C:\\SteamCMD" -m 0777
+        02_downloadFile:
+          sources:
+            C:\\SteamCMD: "https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip"
+        03_updateSteam:
+          commands:
+            01-runUpdate:
+              command: C:\\SteamCMD\\steamcmd.exe +quit
+              ignoreErrors: "true"
+            02-signalDone:
+              command: !Sub >
+                cfn-signal.exe -e %ERRORLEVEL% --resource EC2Instance --stack ${AWS::StackName} --region ${AWS::Region}
+    Properties:
+      KeyName: !Ref KeyName
+      ImageId: 
+        Fn::FindInMap:
+        - RegionMap
+        - !Ref AWS::Region
+        - AMI
+      InstanceType: !Ref InstanceType
+      BlockDeviceMappings:
+        - DeviceName: "/dev/sda1"
+          Ebs:
+            VolumeSize: !Ref VolumeSize
+      Tags:
+        - Key: "Name"
+          Value: !Ref ServiceName
+      SecurityGroups:
+        - !Ref BasicSecurityGroup
+      UserData: 
+        Fn::Base64:
+          !Sub |
+            <script>
+            cfn-init.exe -v -s ${AWS::StackId} -r EC2Instance --configsets default --region ${AWS::Region}
+            </script>
+    # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-attribute-creationpolicy.html
+    CreationPolicy:
+      ResourceSignal:
+        Count: 1
+        Timeout: "PT15M"
+  BasicSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable RDP and SteamCMD access
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 3389
+          ToPort: 3389
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: udp
+          FromPort: 27000
+          ToPort: 27100
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 27000
+          ToPort: 27100
+          CidrIp: 0.0.0.0/0

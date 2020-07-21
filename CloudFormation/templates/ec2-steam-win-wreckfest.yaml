@@ -1,0 +1,210 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: A very basic EC2 instance with Steam CMD.
+Parameters:
+  InstanceType:
+    Type: String
+    Default: t3a.small
+    AllowedValues:
+      - t3.micro
+      - t3.small
+      - t3.medium
+      - t3a.micro
+      - t3a.small
+      - t3a.medium
+    Description: 
+      EC2 Instance Type
+  KeyName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: Name of an existing EC2 KeyPair
+  ServiceName:
+    Type: String
+    Description: The name of the service
+    Default: Wreckfest Server
+  VolumeSize:
+    Type: Number
+    Description: The size of the root volume
+    Default: "40"
+  ServerName:
+    Type: String
+    Description: The name of the server
+    Default: Dimmy's Clean Racing
+  ServerPassword:
+    Type: String
+    Description: A password for the server
+  WelcomeMessage:
+    Type: String
+    Description: The displayed server welcome message
+    Default: "Enjoy!"
+  AdminIds:
+    Type: String
+    Description: A comma seperated list of Steam Ids
+    Default: "76561197960287072"
+  ModIds:
+    Type: String
+    Description: A comma seperated list of Steam Ids
+    Default: ''
+  VehicleDamage:
+    Type: String
+    Description: The type of vehicle damage
+    Default: "normal"
+    AllowedValues:
+      - "normal"
+      - "intense"
+      - "realistic"
+  SpecialVehicles:
+    Type: Number
+    Description: Disable the use of special vehicles
+    Default: "1"
+    AllowedValues:
+      - 0
+      - 1
+Mappings:
+  RegionMap:
+    us-west-2:
+      # Wreckfest Dedicated Server
+      AMI: ami-0c43e33c5f3136b76
+Resources:
+  WreckfestServer: 
+    Type: AWS::EC2::Instance
+    # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-helper-scripts-reference.html
+    Metadata:
+      AWS::CloudFormation::Init:
+        configSets:
+          default:
+            - 01_configFiles
+            - 02_updateSteam
+            - 03_configService
+            - 04_startService
+            - 05_signalDone
+        01_configFiles:
+          files:
+            C:\\wreckfest\\custom_config.cfg: 
+              content: !Sub |
+                server_name=${ServerName}
+                welcome_message=${WelcomeMessage}
+                password=${ServerPassword}
+                max_players=24
+                lan=0
+                steam_port=27015
+                game_port=33540
+                query_port=27016
+                exclude_from_quickplay=1
+                clear_users=0
+                owner_disabled=1
+                admin_control=0
+                lobby_countdown=30
+                ready_players_required=75
+                admin_steam_ids=${AdminIds}
+                op_steam_ids=${ModIds}
+                enable_track_vote=1
+                track=bigstadium_demolition_arena
+                gamemode=derby
+                bots=0
+                ai_difficulty=expert
+                num_teams=2
+                laps=3
+                time_limit=10
+                elimination_interval=0
+                vehicle_damage=${VehicleDamage}
+                car_class_restriction=a
+                car_restriction=
+                special_vehicles_disabled=${SpecialVehicles}
+                car_reset_disabled=0
+                car_reset_delay=2
+                wrong_way_limiter_disabled=0
+                weather=
+                frequency=high
+                #mods=
+                log=log.txt
+            C:\\wreckfest\\open_firewall.ps1:
+              content: |
+                if(Get-NetFirewallRule -DisplayName "Wreckfest Server" -ErrorAction SilentlyContinue)
+                {
+                  echo Rule "Wreckfest Server" Already Exists!
+                }
+                else
+                {
+                  New-NetFirewallRule -DisplayName "Wreckfest Server" -Direction Inbound -Program "C:\wreckfest\server\Wreckfest.exe" -Action Allow
+                }
+            C:\\wreckfest\\start_server.bat:
+              content:
+                start /B server\\Wreckfest.exe -s server_config=custom_config.cfg
+            C:\\wreckfest\\start_server.ps1:
+              content: |
+                $action = New-ScheduledTaskAction -Execute "C:\\wreckfest\\start_server.bat" -WorkingDirectory "c:\\wreckfest"
+                $trigger = New-ScheduledTaskTrigger -AtStartup
+                $principal = New-ScheduledTaskPrincipal -UserID "NT AUTHORITY\SYSTEM" -LogonType ServiceAccount -RunLevel Highest
+
+                Register-ScheduledTask -TaskName "Wreckfest" -Trigger $trigger -Action $action -Principal $principal -Description "Starts a Wreckfest dedicated server"
+                Start-ScheduledTask -TaskName "Wreckfest"
+        02_updateSteam:
+          commands:
+            01-runUpdate:
+              command: C:\\SteamCMD\\steamcmd.exe +login anonymous +force_install_dir C:\\wreckfest +app_update 361580 +quit
+              waitAfterCompletion: "0"
+              ignoreErrors: "true"
+        03_configService:
+          commands:
+            01-openFirewall:
+              command: powershell.exe -Command C:\\wreckfest\open_firewall.ps1
+              waitAfterCompletion: "0"
+        04_startService:
+          commands:
+            01-runScript:
+              command: powershell.exe -Command c:\\wreckfest\start_server.ps1
+              waitAfterCompletion: "0"
+        05_signalDone:
+          commands:
+            01-sendSignal:
+              command: !Sub >
+                cfn-signal.exe -e %ERRORLEVEL% --resource WreckfestServer --stack ${AWS::StackName} --region ${AWS::Region}
+              waitAfterCompletion: "0"
+    Properties:
+      KeyName: !Ref KeyName
+      ImageId: 
+        Fn::FindInMap:
+        - RegionMap
+        - !Ref AWS::Region
+        - AMI
+      InstanceType: !Ref InstanceType
+      BlockDeviceMappings:
+        - DeviceName: "/dev/sda1"
+          Ebs:
+            VolumeSize: !Ref VolumeSize
+      Tags:
+        - Key: "Name"
+          Value: !Ref ServiceName
+      SecurityGroups:
+        - !Ref WreckfestSecurityGroup
+      UserData: 
+        Fn::Base64:
+          !Sub |
+            <script>
+            cfn-init.exe -v -s ${AWS::StackId} -r WreckfestServer --configsets default --region ${AWS::Region}
+            </script>
+    # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-attribute-creationpolicy.html
+    CreationPolicy:
+      ResourceSignal:
+        Count: 1
+        Timeout: "PT15M"
+  WreckfestSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable RDP and Wreckfest Ports
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 3389
+          ToPort: 3389
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: udp
+          FromPort: 27015
+          ToPort: 27016
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 27015
+          ToPort: 27015
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: udp
+          FromPort: 33540
+          ToPort: 33540
+          CidrIp: 0.0.0.0/0
