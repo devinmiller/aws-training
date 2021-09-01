@@ -46,26 +46,17 @@ Amazon EC2 provides the following purchasing options to enable you to optimize y
   >
   > Reserved Instances are a billing discount applied to the use of On-Demand Instances in your account that must match certain attributes.
   ---
-
   Types of Reserved Instances:
 
-<details>
-  <summary>Standard</summary>
+  > Standard
+    : Provides a more signifiant discount the more you pay up front and the longer the contract, but instances cannot be exchanged.
 
-  > Provides a more signifiant discount the more you pay up front and the longer the contract, but instances cannot be exchanged.
-</details>
-
-<details>
-  <summary>Convertible</summary>
-
-  > Provides less of a discount than _Standard_, but instances can exchanged (converted from one configuration to another).
-</details>
-
-<details>
-  <summary>Scheduled</summary>
-
-  > Reserves capacity that is scheduled to recur daily, weekly, or monthly, with a specified start time and duration, for a one-year term
-</details>
+  > Convertible
+    : Provides less of a discount than _Standard_, but instances can exchanged (converted from one configuration to another).
+    
+  > Scheduled
+    : Reserves capacity that is scheduled to recur daily, weekly, or monthly, with a specified start time and duration, for a one-year term
+  ---
 
 </details>
 
@@ -77,4 +68,13 @@ Amazon EC2 provides the following purchasing options to enable you to optimize y
   >
   > Spot Instances are a cost-effective choice if you can be flexible about when your applications run and if your applications can be interrupted.
   ---
+</details>
+
+<details>
+  <summary>Dedicated Hosts</summary>
+  
+  ---
+  > An Amazon EC2 Dedicated Host is a physical server with EC2 instance capacity fully dedicated to your use. Dedicated Hosts allow you to use your existing per-socket, per-core, or per-VM software licenses
+  ---
+
 </details>
