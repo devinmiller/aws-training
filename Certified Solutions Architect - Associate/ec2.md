@@ -48,14 +48,17 @@ Amazon EC2 provides the following purchasing options to enable you to optimize y
   ---
   Types of Reserved Instances:
 
-  > Standard
-    : Provides a more signifiant discount the more you pay up front and the longer the contract, but instances cannot be exchanged.
+  > _Standard_
+  >
+  > Provides a more signifiant discount the more you pay up front and the longer the contract, but instances cannot be exchanged.
 
-  > Convertible
-    : Provides less of a discount than _Standard_, but instances can exchanged (converted from one configuration to another).
+  > _Convertible_
+  >
+  > Provides less of a discount than _Standard_, but instances can exchanged (converted from one configuration to another).
     
-  > Scheduled
-    : Reserves capacity that is scheduled to recur daily, weekly, or monthly, with a specified start time and duration, for a one-year term
+  > _Scheduled_
+  > 
+  > Reserves capacity that is scheduled to recur daily, weekly, or monthly, with a specified start time and duration, for a one-year term
   ---
 
 </details>
