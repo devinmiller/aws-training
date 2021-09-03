@@ -20,11 +20,12 @@ provider "aws" {
   region = "us-west-2"
 }
 
-
+# Get the default VPC
 data "aws_vpc" "default" {
   default = true
 }
 
+# Find the Amazon Linux 2 AMI
 data "aws_ami" "amz_linux" {
   most_recent = true
 
@@ -87,7 +88,6 @@ resource "aws_instance" "cotb_dev_web_01" {
   }
 
   ebs_block_device {
-    
     # Whether the volume should be destroyed on instance termination
     # Defaults to false for non-root volumes
     delete_on_termination = true

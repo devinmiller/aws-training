@@ -112,6 +112,156 @@ The following are the characteristics of security groups:
 - Instances associated with a security group can't talk to each other unless you add rules allowing the traffic (exception: the default security group has these rules by default)
 - A security group can only be used in the VPC that you specify when you create the security group
 
+### Elastic Block Store (EBS)
+
+Amazon Elastic Block Store (Amazon EBS) provides block level storage volumes for use with EC2 instances. EBS volumes behave like raw, unformatted block devices. You can mount these volumes as devices on your instances. EBS volumes that are attached to an instance are exposed as storage volumes that persist independently from the life of the instance. You can create a file system on top of these volumes, or use them in any way you would use a block device (such as a hard drive). You can dynamically change the configuration of a volume attached to an instance. 
+
+#### Volume Types
+
+<details>
+  <summary>Solid state Drives (SSD)</summary>
+
+  ---
+  > Optimized for transactional workloads involving frequent read/write operations with small I/O size, where the dominant performance attribute is IOPS.
+  ---
+  SSD Types:
+
+  > _General Purpose SSD_
+  >
+  > Provides a balance of price and performance.  Recommended for most workloads.
+  >
+  > _Provisioned IOPS SSD_
+  >
+  > Provides high performance for mission-critical, low-latency, or high-throughput workloads. 
+
+</details>
+
+<details>
+  <summary>Hard disk drives (HDD)</summary>
+
+  ---
+  > Optimized for large streaming workloads where the dominant performance attribute is throughput.
+  ---
+  HDD Types:
+
+  > _Throughput Optimized HDD_
+  >
+  >  A low-cost HDD designed for frequently accessed, throughput-intensive workloads.
+  >
+  > _Cold HDD_
+  >
+  >The lowest-cost HDD design for less frequently accessed workloads. 
+</details>
+
+<details>
+  <summary>Previous generation</summary>
+
+  ---
+   > Hard disk drives that can be used for workloads with small datasets where data is accessed infrequently and performance is not of primary importance.
+  ---
+</details>
+
+#### Comparison
+
+<table>
+  <thead>
+    <tr>
+      <th></th>
+      <th colspan="2" style="text-align: center;" align="center">General Purpose SSD</th>
+      <th colspan="2" style="text-align: center;" align="center">Provisioned IOPS SSD</th>
+      <th style="text-align: center;" align="center">Throughput Optimized HDD</th>
+      <th style="text-align: center;" align="center">Cold HDD</th>
+      <th style="text-align: center;" align="center">Magnetic</th>
+    </tr>   
+  </thead>
+    <tbody>
+      <tr>
+        <td><b>Volume type</b></td>
+        <td><code class="code">gp3</code></td>
+        <td><code class="code">gp2</code></td>
+        <td><code class="code">io2</code></td>
+        <td><code class="code">io1</code></td>
+        <td><code class="code">st1</code></td>
+        <td><code class="code">sc1</code></td>
+        <td><code class="code">standard</code></td>
+      </tr>
+      <tr>
+        <td><b>Use cases</b></td>
+        <td colspan="2">
+          <div>
+              <ul type="disc">
+                <li>Applications</li>
+                <li>Development</li>
+              </ul>
+          </div>
+        </td>
+        <td colspan="2">
+          <div>
+              <ul type="disc">
+                <li>High IOPS</li>
+                <li>Databases</li>
+              </ul>
+          </div>
+        </td>
+        <td>
+          <div>
+            <ul type="disc">
+              <li>Big data</li>
+              <li>Data warehouses </li>
+              <li>Log processing</li>
+            </ul>
+          </div>
+        </td>
+        <td>
+          <div>
+              <ultype="disc">
+                <li>Infrequent Access</li>
+                <li>Lowest Storage Cost</li>
+              </ul>
+          </div>
+        </td>
+        <td>
+          <div>
+              <ultype="disc">
+                <li>Infrequent Access</li>
+              </ul>
+          </div>
+        </td>
+      </tr>
+      <tr> 
+        <td><b>Volume size</b></td>
+        <td colspan="2">1 GiB - 16 TiB </td>
+        <td colspan="2">4 GiB - 16 TiB </td>
+        <td>125 GiB - 16 TiB</td>
+        <td>125 GiB - 16 TiB</td>
+        <td>1 GiB-1 TiB</td>
+      </tr>
+      <tr>   
+        <td><b>Max IOPS</b></td>
+        <td colspan="2">16,000</td>
+        <td colspan="2">64,000</td>
+        <td>500</td>
+        <td>250</td>
+        <td>40 - 200</td>
+      </tr>
+      <tr>
+        <td><b>Multi-attach</b></td>
+        <td colspan="2">Not supported</td>
+        <td colspan="2">Supported</td>
+        <td>Not supported</td>
+        <td>Not supported</td>
+        <td>Not supported</td>
+      </tr>
+      <tr>
+        <td><b>Boot volume</b></td>
+        <td colspan="4">Supported</td>
+        <td>Not supported</td>
+        <td>Not supported</td>
+        <td>Supported</td>
+    </tr>
+  </tbody>
+</table>
+
 ## Exam Tips
 
 - EC2
@@ -135,3 +285,27 @@ The following are the characteristics of security groups:
     - Instead use Network Access Control Lists
   - You can specify allow rules, but not deny rules
     - Everything is denied by default
+
+- EBS
+  - Volumes exist on EBS
+    - Think of EBS as a virtual hard disk.
+  - Snapshots exist on S3
+    - Think of snapshots as a backup of the disk
+  - Snapshots are point in time copies of Volumes
+  - Snapshots are incremental
+    - Only the blocks changed since the last snapshot are moved to S3
+  - The first snapshot may take some time to create
+  - To create a snapshot for _root_ volumes, you should stop the instance first
+    - You _can_ take a snapshot while the instance is running
+  - You can create AMIs from snapshots
+  - You can change EBS volume sizes and storage type on the fly
+  - Volumes will always be in the same _availability zone_ as the EC2 instance
+  - To move an EC2 volume from one _availability zone_ to another:
+    - Take a snapshot of it
+    - Create an AMI from the snapshot
+    - Launch an EC2 instance with the AMI in another _availability zone_
+  - To move an EC2 volume from one _region_ to another:
+    - Take a snapshot of it
+    - Create an AMI from the snapshot
+    - Copy the AMI from one region to another
+    - Launch an EC2 instance with the AMI in the new _region_
