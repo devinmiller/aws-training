@@ -9,7 +9,13 @@ by using AWS technologies.
 Amazon Elastic Compute Cloud (Amazon EC2) provides scalable computing capacity in the Amazon Web Services (AWS) Cloud. 
 
 - [Documentation Portal](https://docs.aws.amazon.com/ec2/index.html)
-- [Training](./ec2.md)
+- [Exam Preparation](./ec2.md)
+
+## Security Groups
+
+A security group acts as a virtual firewall for your instance to control inbound and outbound traffic.
+
+- [Documentation Portal](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html)
 
 # Links
 
