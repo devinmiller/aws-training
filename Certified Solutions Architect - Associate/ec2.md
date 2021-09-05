@@ -268,6 +268,129 @@ Amazon Elastic Block Store (Amazon EBS) provides block level storage volumes for
 
 You can back up the data on your Amazon EBS volumes to Amazon S3 by taking point-in-time snapshots. Snapshots are incremental backups, which means that only the blocks on the device that have changed after your most recent snapshot are saved. This minimizes the time required to create the snapshot and saves on storage costs by not duplicating data. 
 
+### AMI Types
+
+You can select an AMI to use based on the following characteristics:
+
+- _Region_
+- Operating System
+- Architecture
+- Launch Permissions
+- Storage for the _root_ device
+
+#### Storeage for the Root Device
+
+All AMIs are categorized as either backed by Amazon EBS or backed by instance store.
+
+<details>
+  <summary>Elastic Block Store (EBS)</summary>
+
+  ---
+  > Elastic Block Store (EBS) provides block level storage volumes for use with EC2 instances. EBS volumes behave like raw, unformatted block devices. You can mount these volumes as devices on your instances. EBS volumes that are attached to an instance are exposed as storage volumes that persist independently from the life of the instance
+  ---
+</details>
+
+<details>
+  <summary>Instance Store</summary>
+
+  ---
+  > An instance store provides temporary block-level storage for your instance. This storage is located on disks that are physically attached to the host computer. Instance store is ideal for temporary storage of information that changes frequently, such as buffers, caches, scratch data, and other temporary content, or for data that is replicated across a fleet of instances, such as a load-balanced pool of web servers.
+  ---
+</details>
+
+[AMI Types](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ComponentsAMIs.html)
+
+### ENI vs ENA vs EFA
+
+<details>
+  <summary>Elastic Network Interface (ENI)</summary>
+
+  ---
+  > An elastic network interface is a logical networking component in a VPC that represents a virtual network card.
+  
+  > For basic networking.  Perhaps you need a seperate management network to your production network or a separate logging network and you need to this at low cost.  In this scenario use multiple ENIs for each network.  
+  ---
+</details>
+
+<details>
+  <summary>Elastic Network Adapter (ENA)</summary>
+
+  ---
+  > Amazon EC2 provides enhanced networking capabilities through the Elastic Network Adapter (ENA).
+
+  > For when you need speeds between 10Gbps and 100Gbps.  Anywhere you need reliable, high throughput.
+  ---
+</details>
+
+<details>
+  <summary>Elastic Fabric Adapter (EFA)</summary>
+
+  ---
+  > An Elastic Fabric Adapter (EFA) is a network device that you can attach to your Amazon EC2 instance to accelerate High Performance Computing (HPC) and machine learning applications.
+
+  > For when you need to accelerate _High Performance Computing_ (HPC) and machine learning applications or if you need to do an OS by-pass.  If you see a scenario question mentioning HPC or MI and asking what network adaptor you want, choose EFA.
+  ---
+</details>
+
+[Elastic Network Interfaces](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html)
+
+[Elastic Network Adapter](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/enhanced-networking-ena.html)
+
+[Elastic Fabric Adapter](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/efa.html)
+
+### Encryption
+
+You can encrypt both the boot and data volumes of an EC2 instance.
+
+When you create an encrypted EBS volume and attach it to a supported instance type, the following types of data are encrypted: 
+
+- Data at rest inside the volume
+- All data moving between the volume and the instance
+- All snapshots created from the volume
+- All volumes created from those snapshots
+
+Encryption is supported by all EBS volume types. You can expect the same IOPS performance on encrypted volumes as on unencrypted volumes, with a minimal effect on latency. You can access encrypted volumes the same way that you access unencrypted volumes. Encryption and decryption are handled transparently, and they require no additional action from you or your applications.
+
+[EBS Encryption](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSEncryption.html)
+
+### Spot Instances
+
+A Spot Instance is an instance that uses spare EC2 capacity that is available for less than the On-Demand price. Because Spot Instances enable you to request unused EC2 instances at steep discounts, you can lower your Amazon EC2 costs significantly. The hourly price for a Spot Instance is called a Spot price. The Spot price of each instance type in each Availability Zone is set by Amazon EC2, and is adjusted gradually based on the long-term supply of and demand for Spot Instances. Your Spot Instance runs whenever capacity is available and the maximum price per hour for your request exceeds the Spot price. 
+
+[Spot Instances](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-spot-instances.html)
+
+
+### Spot Fleets
+
+A Spot Fleet is set of Spot Instances and optionally On-Demand Instances that is launched based on criteria that you specify. The Spot Fleet selects the Spot capacity pools that meet your needs and launches Spot Instances to meet the target capacity for the fleet. By default, Spot Fleets are set to maintain target capacity by launching replacement instances after Spot Instances in the fleet are terminated. You can submit a Spot Fleet as a one-time request, which does not persist after the instances have been terminated. You can include On-Demand Instance requests in a Spot Fleet request. 
+
+[Spot Fleet](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/spot-fleet.html)
+
+### EC2 Hibernation
+
+When you hibernate an instance, Amazon EC2 signals the operating system to perform hibernation (suspend-to-disk). Hibernation saves the contents from the instance memory (RAM) to your Amazon Elastic Block Store (Amazon EBS) root volume. Amazon EC2 persists the instance's EBS root volume and any attached EBS data volumes.
+
+When you start your instance: 
+
+- The EBS root volume is restored to its previous state
+- The RAM contents are reloaded
+- The processes that were previously running on the instance are resumed
+- Previously attached data volumes are reattached and the instance retains its instance ID 
+
+[EC2 Hibernation](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Hibernate.html)
+
+### CloudWatch
+
+Amazon CloudWatch monitors your Amazon Web Services (AWS) resources and the applications you run on AWS in real time. You can use CloudWatch to collect and track metrics, which are variables you can measure for your resources and applications.
+
+You can create custom dashboards to display metrics about your custom applications, and display custom collections of metrics that you choose. 
+
+You can create alarms that watch metrics and send notifications or automatically make changes to the resources you are monitoring when a threshold is breached
+
+With CloudWatch, you gain system-wide visibility into resource utilization, application performance, and operational health. 
+
+[CloudWatch](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/WhatIsCloudWatch.html)
+
 ## Exam Tips
 
 - EC2
@@ -315,3 +438,66 @@ You can back up the data on your Amazon EBS volumes to Amazon S3 by taking point
     - Create an AMI from the snapshot
     - Copy the AMI from one region to another
     - Launch an EC2 instance with the AMI in the new _region_
+
+- AMI
+  - _Instance Store Volumes_ are sometimes called _Ephemeral Storage_
+  - _Instance Store Volumes_ **cannot** be stopped
+    - If the underlying host fails, you will lose your data
+  - _Elastic Block Store_ backed instance can be stopped
+    - You will not lose the data on this instance
+  - You can reboot both without losing your data
+  - By defailt, both _root_ volumes will be deleted on termination
+    - With _Elastic Blick Store_ volumes, you can tell AWS to keep the _root_ device
+  
+- ENI
+  - For basic networking
+
+- ENA
+  - For when you need speeds between 10Gbps and 100Gbps
+  - For when you need reliable, high throughput networking
+
+- EFA
+  - For when you need to accelerate _High Performance Computing_ (HPC) applications
+  - For when you need to accelerate _Machine Learning_ (MI) applications
+  - If you need to an operating system (OS) by-pass
+
+- Encryption
+  - Snapshots of encrypted volumes are encrypted automatically
+  - Volumes restored from encrypted snapshots are encrypted automatically
+  - You can share snapshots, but only if they are unencrypted
+    - Can be shared with other AWS accounts or made public
+  - You can now encrypt _root_ device volumes upon creation of the EC2 instance
+  - To encrypt an unencrypted _root_ device volume
+    - Create a Snapshot of the unencrypted root device volume
+    - Create a copy of the Snapshot and select the encrypt option
+    - Create an AMI from the encrypted Snapshot
+    - Use that AMI to launch new encrypted instances
+
+- Spot Instances
+  - Save up to 90% of of the cost of On-Demand Instances
+  - Useful for any type of computing where you don't need peristent storage
+  - You can block Spot Instances from terminating by using Spot block
+
+- Spot Fleets
+  - A collection of Spot Instances and, optionally, On-Demand Instances
+
+- EC2 Hibernation
+  - Preserves the in-memory RAM on persistent storage (EBS)
+  - Much faster to boot up because you do not need to reload the operating system
+  - Instance RAM must be less than 150 GB
+  - Instance families include C3, C4, C5, I3, M3, M4, M5, R3, R4, R5, T2, T3
+  - Available for Windows, Amazon Linux 2, and Ubuntu
+  - Instances can't be hibernated for more than 60 days
+  - Available for On-Demand and Reserved Instances
+
+- CloudWatch
+  - CloudWatch is used for monitoring performance
+  - CloudWatch can monitor most of AWS as well as your applications that run on AWS
+  - _Standard_ monitoring is 5 minutes
+  - _Detailed_ monitoring is 1 minute
+  - You can create CloudWatch _alarms_ which trigger notifications
+  - _CloudWatch_ is all about performance
+  - _CloudTrail_ is all about auditing
+  - You can create _dashboards_ to see what is happening
+  - You can use _events_ to respond to state changes in resources
+  - You can use _logs_ to aggregate, monitor, and store log data

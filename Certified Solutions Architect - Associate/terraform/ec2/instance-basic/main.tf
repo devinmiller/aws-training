@@ -3,7 +3,7 @@
 terraform {
   backend "s3" {
     bucket          = "cotb.terraform"
-    key             = "aws-training/ec2/tf.tfstate"
+    key             = "aws-training/ec2/instance-basic.tfstate"
     dynamodb_table  = "aws_cotb_dev_terraform_state"
     region          = "us-west-2"
   }
@@ -42,11 +42,13 @@ data "aws_ami" "amz_linux" {
   owners = ["137112412989"] # Amazon
 }
 
+# Create a security in the default VPC
 resource "aws_security_group" "cotb_dev_web_sg" {
   name = "cotb-dev-web-sg"
   vpc_id = data.aws_vpc.default.id
 }
 
+# Create an inbound rule allowing SSH traffic
 resource "aws_security_group_rule" "allow_ssh_in" {
   type              = "ingress"
   from_port         = 22
@@ -56,6 +58,7 @@ resource "aws_security_group_rule" "allow_ssh_in" {
   security_group_id = aws_security_group.cotb_dev_web_sg.id
 }
 
+# create an outbound rule allowing all traffic
 resource "aws_security_group_rule" "allow_all_out" {
   type              = "egress"
   from_port         = 0
