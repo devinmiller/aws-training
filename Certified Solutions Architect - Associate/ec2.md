@@ -391,6 +391,120 @@ With CloudWatch, you gain system-wide visibility into resource utilization, appl
 
 [CloudWatch](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/WhatIsCloudWatch.html)
 
+### Command Line Interface (CLI)
+
+The AWS Command Line Interface (CLI) is a unified tool to manage your AWS services. 
+
+[AWS CLI](https://docs.aws.amazon.com/cli/index.html)
+
+### Identity and Access Management (IAM)
+
+AWS Identity and Access Management (IAM) is a web service that helps you securely control access to AWS resources. You use IAM to control who is authenticated (signed in) and authorized (has permissions) to use resources. 
+
+[What is IAM?](https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html)
+
+### User-Data
+
+When you launch an instance in Amazon EC2, you have the option of passing user data to the instance that can be used to perform common automated configuration tasks and even run scripts after the instance starts.
+
+[User-Data](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html)
+
+### Meta-Data
+
+Because your instance metadata is available from your running instance, you do not need to use the Amazon EC2 console or the AWS CLI. This can be helpful when you're writing scripts to run from your instance. For example, you can access the local IP address of your instance from instance metadata to manage a connection to an external application. 
+
+[Meta-Data](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-data-retrieval.html)
+
+### Elastic File System (EFS)
+
+Amazon Elastic File System (Amazon EFS) provides a simple, serverless, set-and-forget elastic file system for use with AWS Cloud services and on-premises resources. It is built to scale on demand to petabytes without disrupting applications, growing and shrinking automatically as you add and remove files, eliminating the need to provision and manage capacity to accommodate growth
+
+[What is EFS?](https://docs.aws.amazon.com/efs/latest/ug/whatisefs.html)
+
+### Amazon FSx for Windows
+
+Amazon FSx for Windows File Server provides fully managed Microsoft Windows file servers, backed by a fully native Windows file system. Amazon FSx for Windows File Server has the features, performance, and compatibility to easily lift and shift enterprise applications to the AWS Cloud.
+
+[FSx for Windows](https://docs.aws.amazon.com/fsx/latest/WindowsGuide/what-is.html)
+
+### Amazon FSx for Lustre
+
+Amazon FSx for Lustre makes it easy and cost-effective to launch and run the popular, high-performance Lustre file system. You use Lustre for workloads where speed matters, such as machine learning, high performance computing (HPC), video processing, and financial modeling. 
+
+[FSx fpr Lustre](https://docs.aws.amazon.com/fsx/latest/LustreGuide/what-is.html)
+
+### Placement Groups
+
+You can use placement groups to influence the placement of a group of interdependent instances to meet the needs of your workload. Depending on the type of workload, you can create a placement group using one of the following placement strategies: 
+
+<details>
+  <summary>Cluster</summary>
+
+  ---
+  > Packs instances close together inside an Availability Zone. This strategy enables workloads to achieve the low-latency network performance necessary for tightly-coupled node-to-node communication that is typical of HPC applications
+  ---
+</details>
+
+<details>
+  <summary>Partition</summary>
+
+  ---
+  > Spreads your instances across logical partitions such that groups of instances in one partition do not share the underlying hardware with groups of instances in different partitions. This strategy is typically used by large distributed and replicated workloads, such as Hadoop, Cassandra, and Kafka. 
+  ---
+</details>
+
+<details>
+  <summary>Spread</summary>
+
+  ---
+  > Strictly places a small group of instances across distinct underlying hardware to reduce correlated failures.
+  ---
+</details>
+
+[Placement Groups](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/placement-groups.html)
+
+### Web Application Firewall
+
+AWS WAF is a web application firewall that lets you monitor the HTTP and HTTPS requests that are forwarded to an Amazon CloudFront distribution, an Amazon API Gateway REST API, an Application Load Balancer, or an AWS AppSync GraphQL API. AWS WAF also lets you control access to your content, based on conditions that you specify.
+
+At the simplest level, AWS WAF lets you choose one of the following behaviors:
+
+<details>
+  <summary>Allow all requests except the ones that you specify</summary>
+
+  ---
+  > This is useful when you want Amazon CloudFront, Amazon API Gateway, Application Load Balancer, or AWS AppSync to serve content for a public website, but you also want to block requests from attackers. 
+  ---
+</details>
+
+<details>
+  <summary>Block all requests except the ones that you specify</summary>
+
+  ---
+  > This is useful when you want to serve content for a restricted website whose users are readily identifiable by properties in web requests, such as the IP addresses that they use to browse to the website. 
+  ---
+</details>
+
+<details>
+  <summary>Count the requests that match the properties that you specify</summary>
+
+  ---
+  > When you want to allow or block requests based on new properties in web requests, you first can configure AWS WAF to count the requests that match those properties without allowing or blocking those requests. This lets you confirm that you didn't accidentally configure AWS WAF to block all the traffic to your website. When you're confident that you specified the correct properties, you can change the behavior to allow or block requests. 
+  ---
+</details>
+
+ You can define conditions by using characteristics of web requests such as the following: 
+
+- IP addresses that requests originate from.
+- Country that requests originate from.
+- Values in request headers.
+- Strings that appear in requests, either specific strings or strings that match regular expression (regex) patterns.
+- Length of requests.
+- Presence of SQL code that is likely to be malicious (known as SQL injection).
+- Presence of a script that is likely to be malicious (known as cross-site scripting).
+
+[What is WAF?](https://docs.aws.amazon.com/waf/latest/developerguide/what-is-aws-waf.html)
+
 ## Exam Tips
 
 - EC2
@@ -501,3 +615,83 @@ With CloudWatch, you gain system-wide visibility into resource utilization, appl
   - You can create _dashboards_ to see what is happening
   - You can use _events_ to respond to state changes in resources
   - You can use _logs_ to aggregate, monitor, and store log data
+
+- CLI
+  - You can interact with AWS from anywhere in the world just by using the command line
+  - You will need to set up access in IAM
+  - Commands themselves are not in the exam, but some basic commands will be useful to know for real life
+
+- IAM
+  - Roles are more secure than storing your access key and secret access key on individual EC2 instances
+  - Roles are easier to manage
+  - Roles can be assigned to an EC2 instance after it is created using both the console and command line
+  - Role are universal, you can use them in any region
+
+- Instance Metadata
+  - Used to get information about an instance (such as public ip)
+  - curl http://{ip}/latest/meta-data
+  - curl http://{ip}/latest/user-data
+
+- EFS
+  - Supports the Network File System version 4 (NFSv4) protocol
+  - You only pay for the storage you use (no pre-provisioning required)
+  - Can scale up to the petabytes
+  - Can support thousands of concurrent NFS connections
+  - Data is stored across multiple _availability zones_ within a region
+  - Read After Write Consistency
+
+- EFS vs FSx
+  - EFS
+    - When you need distributed, highly resilient storage for Linux instances and Linux-based applications
+  - Amazon FSx for Windows
+    - When you need centralized storage for Windows-based applications such as Sharepoint, Microsoft SQL Server, Workspaces, IIS Web Server, or any other native Microsoft Application
+  - Amazon FSx for Lustre
+    - When you need high-speed, high-capacity distributed storage for applications that do High Performance Compute (HPC), financial modelling, etc.
+    - Can store data directly on S3
+
+- Placement Groups
+  - Clustered Placement Group
+    - Low Network Latency/High Network Throughput
+  - Spread Placement Group
+    - Individual Critical EC2 Instances
+  - Partitioned
+    - Multiple Ec2 instances HDFS, HBase, and Cassandra
+  - A clustered placement group can't span multiple _Availability Zones_
+  - A spread placement and partition group can span multiple _Availability Zones_
+  - The name you specify for a placement group must be unique within your AWS account
+  - Only certain types of instances can be launched in a placement group (Compute Optimized, GPU. Memory Optimized, Storage Optimized)
+  - AWS recommends homogenous instances within clustered placement groups
+  - You can't merge placement groups
+  - You can move an existing instance into a placement group
+    - The instance must be in the stopped state before moving
+    - You can move or remove an instance using the CLI or an SDK, but not via the console yet
+
+- HPC on AWS
+  - Data Transfer
+    - Snowball, Snowmobile (terrabytes/petabytes worth of data)
+    - AWS DataSync to store on S3, EFS, FSx for Windows, FSx for Lustre, etc.
+    - Direct Connect
+  - Compute and Networking
+    - EC2 instances that are GPU or CPU optimized
+    - EC2 fleets (Spot Instances or Spot Fleets)
+    - Placement groups (cluster placement groups)
+    - Enhanced networking single root I/O virtualization (SR-IOV)
+    - Elastic Network Adapter or Intel 82599 Virtual Function (VF) interface
+    - Elast Fabric Adapters (OS-bypass)
+  - Storage
+    - Instance-Attached Storage
+      - EBS: Scale up to 64,000 IOPS with Provisioned IOPS
+      - Instance Store: Scale to millions of IOPS; low latency
+    - Network Storage
+      - Amazon S3: Distributed object-based storage; not a file system
+      - Amazon EFS: Scale IOPS based on total size, or use Provisioned IOPS
+      - Amazon FSx for Lustre: HPC-optimized distributed file sustem; millions of IOPs, whcih is also backed by S3
+  - Orchestration and Automation
+    - AWS Batch
+    - AWS Paralell Cluster
+  
+- WAF
+  - Block malicious IP addresses using one of the follow:
+    - AWS WAF
+    - Network ACLs
+
