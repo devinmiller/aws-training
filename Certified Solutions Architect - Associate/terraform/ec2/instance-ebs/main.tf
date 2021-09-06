@@ -3,7 +3,7 @@
 terraform {
   backend "s3" {
     bucket          = "cotb.terraform"
-    key             = "aws-training/ec2/instance-basic.tfstate"
+    key             = "aws-training/ec2/instance-ebs.tfstate"
     dynamodb_table  = "aws_cotb_dev_terraform_state"
     region          = "us-west-2"
   }
@@ -131,16 +131,6 @@ resource "aws_instance" "cotb_dev_web_01" {
     # Whether the volume should be destroyed on instance termination
     # Defaults to true for the root volume
     delete_on_termination = true
-    # Size of the volume in gibibytes
-    volume_size = "8"
-  }
-
-  ebs_block_device {
-    # Whether the volume should be destroyed on instance termination
-    # Defaults to false for non-root volumes
-    delete_on_termination = true
-    # Name of the device to mount
-    device_name = "/dev/sda1"
     # Size of the volume in gibibytes
     volume_size = "8"
   }

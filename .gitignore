@@ -1,3 +1,4 @@
 config
 .terraform
 secrets.env
+*.tfplan
