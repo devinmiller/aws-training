@@ -73,6 +73,11 @@ data "aws_ami" "amz_linux" {
   owners = ["137112412989"] # Amazon
 }
 
+# Get a list of availability zones
+data "aws_availability_zones" "availability_zones" {
+  state = "available"
+}
+
 # Create a security in the default VPC
 resource "aws_security_group" "cotb_dev_web_sg" {
   name = "cotb-dev-web-sg"
@@ -114,6 +119,8 @@ resource "aws_instance" "cotb_dev_web_01" {
   ami                         = data.aws_ami.amz_linux.id
   # Whether to associate a public IP address with an instance in a VPC
   associate_public_ip_address = true
+  # AZ to start the instance in.
+  availability_zone           = data.aws_availability_zones.availability_zones.names[0]
   # If true, enables EC2 Instance Termination Protection (defaults to false)
   disable_api_termination     = false 
   #  If true, the launched EC2 instance will support hibernation
@@ -138,6 +145,25 @@ resource "aws_instance" "cotb_dev_web_01" {
   tags = {
     Name = "cotb-dev-web-01"
   }
+}
+
+# Create Throughput Optimized HDD (st1)
+resource "aws_ebs_volume" "cotb_dev_web_vol_1" {
+  # The AZ where the EBS volume will exist, must be in the same zone as the instance
+  availability_zone = data.aws_availability_zones.availability_zones.names[0]
+  # The size of the drive in GiBs.
+  size              = 500
+  # The type of EBS volume. 
+  type              = "st1"
+}
+
+resource "aws_volume_attachment" "cotb_dev_web_vol_1_attachment" {
+  # The device name to expose to the instance 
+  device_name = "/dev/sdf"
+  # ID of the Volume to be attached
+  volume_id   = aws_ebs_volume.cotb_dev_web_vol_1.id
+  # ID of the Instance to attach to
+  instance_id = aws_instance.cotb_dev_web_01.id
 }
 
 output "ec2" {
