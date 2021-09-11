@@ -36,6 +36,8 @@ locals {
   user_data = <<EOF
 #!/bin/bash
 export PATH=$PATH:/usr/local/bin
+# install disk testing utility
+yum install fio -y
 # install nginx from Amazon repo
 amazon-linux-extras install nginx1 -y
 # make sure nginx service is started
@@ -162,6 +164,46 @@ resource "aws_volume_attachment" "cotb_dev_web_vol_1_attachment" {
   device_name = "/dev/sdf"
   # ID of the Volume to be attached
   volume_id   = aws_ebs_volume.cotb_dev_web_vol_1.id
+  # ID of the Instance to attach to
+  instance_id = aws_instance.cotb_dev_web_01.id
+}
+
+# Create Cold HDD (sc1)
+resource "aws_ebs_volume" "cotb_dev_web_vol_2" {
+  # The AZ where the EBS volume will exist, must be in the same zone as the instance
+  availability_zone = data.aws_availability_zones.availability_zones.names[0]
+  # The size of the drive in GiBs.
+  size              = 500
+  # The type of EBS volume. 
+  type              = "sc1"
+} 
+
+resource "aws_volume_attachment" "cotb_dev_web_vol_2_attachment" {
+  # The device name to expose to the instance 
+  device_name = "/dev/sdg"
+  # ID of the Volume to be attached
+  volume_id   = aws_ebs_volume.cotb_dev_web_vol_2.id
+  # ID of the Instance to attach to
+  instance_id = aws_instance.cotb_dev_web_01.id
+}
+
+# Create Provisioned IOPS SSD (io2)
+resource "aws_ebs_volume" "cotb_dev_web_vol_3" {
+  # The AZ where the EBS volume will exist, must be in the same zone as the instance
+  availability_zone = data.aws_availability_zones.availability_zones.names[0]
+  # The amount of IOPS to provision for the disk.
+  iops              = 4000
+  # The size of the drive in GiBs.
+  size              = 8
+  # The type of EBS volume. 
+  type              = "io2"
+} 
+
+resource "aws_volume_attachment" "cotb_dev_web_vol_3_attachment" {
+  # The device name to expose to the instance 
+  device_name = "/dev/sdh"
+  # ID of the Volume to be attached
+  volume_id   = aws_ebs_volume.cotb_dev_web_vol_3.id
   # ID of the Instance to attach to
   instance_id = aws_instance.cotb_dev_web_01.id
 }
