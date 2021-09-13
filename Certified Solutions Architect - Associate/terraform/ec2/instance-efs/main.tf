@@ -24,15 +24,11 @@ variable ssh_key {
   description = "Name of the SSH key pair to use with instance"
 }
 
-# Get the default VPC
-data "aws_vpc" "default" {
-  default = true
+variable hibernate {
+  type = bool
+  default = false
+  description = "Enable/Disble EC2 instance hibernation"
 }
-
-# Get the default subnet ids
-data "aws_subnet_ids" "default_ids" {
-  vpc_id = data.aws_vpc.default.id
-} 
 
 resource "aws_efs_file_system" "cotb_dev_web_file_system" {
   # The file system performance mode.  Default is generalPurpose.
@@ -40,9 +36,16 @@ resource "aws_efs_file_system" "cotb_dev_web_file_system" {
 }
 
 resource "aws_efs_mount_target" "file_system_mount_target" {
-  for_each = data.aws_subnet_ids.default_ids.ids
   # The ID of the file system for which the mount target is intended.
-  file_system_id = aws_efs_file_system.cotb_dev_web_file_system.id
+  file_system_id  = aws_efs_file_system.cotb_dev_web_file_system.id
+  # A list of up to 5 VPC security group IDs in effect for the mount target.
+  security_groups = [ aws_security_group.cotb_dev_web_sg.id ]
   # The ID of the subnet to add the mount target in.
-  subnet_id      = each.value
+  subnet_id       = data.aws_subnet.selected.id
+}
+
+output "efs" {
+  value = {
+    id = aws_efs_mount_target.file_system_mount_target.id
+  }
 }
