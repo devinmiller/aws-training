@@ -9,12 +9,12 @@ amazon-linux-extras install nginx1 -y
 # make sure nginx service is started
 systemctl start nginx
 # connect to EFS
-mount -t efs -o tls ${aws_efs_mount_target.file_system_mount_target.id}:/ /usr/share/nginx/html
+mount -t efs -o tls ${aws_efs_file_system.cotb_dev_web_file_system.id}:/ /usr/share/nginx/html
 # change the default HTML page
 cat > /usr/share/nginx/html/index.html <<DOC
 <html>
   <body>
-    <h1>nginx is running on cotb-dev-web-01</h1>
+    <h1>nginx is running on cotb-dev-web AWS instances</h1>
   </body>
 </html>
 DOC
@@ -29,7 +29,7 @@ amazon-linux-extras install nginx1 -y
 # make sure nginx service is started
 systemctl start nginx
 # connect to EFS
-mount -t efs -o tls ${aws_efs_mount_target.file_system_mount_target.id}:/ /usr/share/nginx/html
+mount -t efs -o tls ${aws_efs_file_system.cotb_dev_web_file_system.id}:/ /usr/share/nginx/html
 EOF
 }
 

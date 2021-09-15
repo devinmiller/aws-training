@@ -46,6 +46,6 @@ resource "aws_efs_mount_target" "file_system_mount_target" {
 
 output "efs" {
   value = {
-    id = aws_efs_mount_target.file_system_mount_target.id
+    id = aws_efs_file_system.cotb_dev_web_file_system.id
   }
 }
