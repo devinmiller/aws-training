@@ -35,13 +35,22 @@ resource "aws_efs_file_system" "cotb_dev_web_file_system" {
   performance_mode = "generalPurpose"
 }
 
-resource "aws_efs_mount_target" "file_system_mount_target" {
+resource "aws_efs_mount_target" "mount_target_subnet_one" {
   # The ID of the file system for which the mount target is intended.
   file_system_id  = aws_efs_file_system.cotb_dev_web_file_system.id
   # A list of up to 5 VPC security group IDs in effect for the mount target.
   security_groups = [ aws_security_group.cotb_dev_web_sg.id ]
   # The ID of the subnet to add the mount target in.
-  subnet_id       = data.aws_subnet.selected.id
+  subnet_id       = data.aws_subnet.zone_one.id
+}
+
+resource "aws_efs_mount_target" "mount_target_subnet_two" {
+  # The ID of the file system for which the mount target is intended.
+  file_system_id  = aws_efs_file_system.cotb_dev_web_file_system.id
+  # A list of up to 5 VPC security group IDs in effect for the mount target.
+  security_groups = [ aws_security_group.cotb_dev_web_sg.id ]
+  # The ID of the subnet to add the mount target in.
+  subnet_id       = data.aws_subnet.zone_two.id
 }
 
 output "efs" {

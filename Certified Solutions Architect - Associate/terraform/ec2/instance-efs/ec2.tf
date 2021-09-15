@@ -8,7 +8,7 @@ yum install fio amazon-efs-utils -y
 amazon-linux-extras install nginx1 -y
 # make sure nginx service is started
 systemctl start nginx
-# connect to EFS
+# connect to EFS 
 mount -t efs -o tls ${aws_efs_file_system.cotb_dev_web_file_system.id}:/ /usr/share/nginx/html
 # change the default HTML page
 cat > /usr/share/nginx/html/index.html <<DOC
@@ -76,7 +76,7 @@ resource "aws_security_group_rule" "allow_http_in" {
   security_group_id = aws_security_group.cotb_dev_web_sg.id
 }
 
-# Create an inbound rule allowing HTTP traffic
+# Create an inbound rule allowing NFS traffic
 resource "aws_security_group_rule" "allow_nfs_in" {
   type              = "ingress"
   from_port         = 2049
@@ -97,6 +97,11 @@ resource "aws_security_group_rule" "allow_all_out" {
 }
 
 resource "aws_instance" "cotb_dev_web_01" {
+  # Need to explicitly set the dependency on this resource
+  depends_on = [
+    aws_efs_mount_target.mount_target_subnet_one
+  ]
+
   # AMI to use for the instance.
   ami                         = data.aws_ami.amz_linux.id
   # Whether to associate a public IP address with an instance in a VPC
@@ -112,7 +117,7 @@ resource "aws_instance" "cotb_dev_web_01" {
   # Key name of the Key Pair to use for the instance
   key_name                    = var.ssh_key
   # VPC Subnet ID to launch in.
-  subnet_id                   = data.aws_subnet.selected.id
+  subnet_id                   = data.aws_subnet.zone_one.id
   #  User data to provide when launching the instance
   user_data_base64            = base64encode(local.user_data_01) 
   #  A list of security group IDs to associate with
@@ -132,6 +137,10 @@ resource "aws_instance" "cotb_dev_web_01" {
 }
 
 resource "aws_instance" "cotb_dev_web_02" {
+  depends_on = [
+    aws_efs_mount_target.mount_target_subnet_two
+  ]
+
   # AMI to use for the instance.
   ami                         = data.aws_ami.amz_linux.id
   # Whether to associate a public IP address with an instance in a VPC
@@ -147,7 +156,7 @@ resource "aws_instance" "cotb_dev_web_02" {
   # Key name of the Key Pair to use for the instance
   key_name                    = var.ssh_key
   # VPC Subnet ID to launch in.
-  subnet_id                   = data.aws_subnet.selected.id
+  subnet_id                   = data.aws_subnet.zone_two.id
   #  User data to provide when launching the instance
   user_data_base64            = base64encode(local.user_data_02) 
   #  A list of security group IDs to associate with
@@ -163,5 +172,12 @@ resource "aws_instance" "cotb_dev_web_02" {
 
   tags = {
     Name = "cotb-dev-web-02"
+  }
+}
+
+output "instances" {
+  value = {
+    instance_one = aws_instance.cotb_dev_web_01.public_ip
+    instance_two = aws_instance.cotb_dev_web_02.public_ip
   }
 }

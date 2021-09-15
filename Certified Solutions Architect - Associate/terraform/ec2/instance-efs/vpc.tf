@@ -18,12 +18,20 @@ data "aws_availability_zones" "availability_zones" {
 }
 
 # Get a subnet to work with
-data "aws_subnet" "selected" {
+data "aws_subnet" "zone_one" {
   availability_zone_id = data.aws_availability_zones.availability_zones.zone_ids[0]
+  default_for_az = true
+}
+
+# Get a subnet to work with
+data "aws_subnet" "zone_two" {
+  availability_zone_id = data.aws_availability_zones.availability_zones.zone_ids[1]
+  default_for_az = true
 }
 
 output "vpc" {
   value = {
-    subnet = data.aws_subnet.selected.id
+    subnet_one = data.aws_subnet.zone_one.id
+    subnet_two = data.aws_subnet.zone_two.id
   }
 }
