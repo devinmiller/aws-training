@@ -21,7 +21,7 @@ provider "aws" {
 variable multi_az {
   type = bool
   default = false
-  description = ""
+  description = "Specifies if the RDS instance is multi-AZ."
 }
 
 resource "aws_db_instance" "cotb_dev_mysql_db" {

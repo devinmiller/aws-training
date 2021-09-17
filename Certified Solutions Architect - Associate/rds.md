@@ -38,3 +38,32 @@ RDS takes over many of the difficult and tedious management tasks of a relationa
 - RDS is _not_ serverless
 - Aurora Serverless _is_ serverless
 
+- Two types of _backups_ for RDS
+  - Automated Backups
+    - Scheduled
+  - Database Snapshots
+    - Manual
+
+- Read Replicas
+  - Can be Multi-Az
+  - Used to increase performance
+  - Must have _backups_turned on
+  - Can be in different regions
+  - Can be MySQL, PostgreSQL, MariaDB, Oracle, Aurora
+  - Can be promoted to master
+    - Will break the read replica
+- Multi-Az
+  - Used for disaster recovery
+  - Force a failure over by rebooting the RDS instance
+- Encryption at rest is supported by:
+  - MySQL
+  - PostgreSQL
+  - MariaDB
+  - Oracle
+  - Aurora
+- Encryption is done using the AWS KMS service
+  - Once done, the following are encrypted:
+    - Data stored at rest in underlying storage
+    - Automated backups
+    - read replicas
+    - snapshots
