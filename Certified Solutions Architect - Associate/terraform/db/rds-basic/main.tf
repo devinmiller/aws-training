@@ -1,7 +1,7 @@
 terraform {
   backend "s3" {
     bucket          = "cotb.terraform"
-    key             = "aws-training/rds/db-basic.tfstate"
+    key             = "aws-training/db/rds-basic.tfstate"
     dynamodb_table  = "aws_cotb_dev_terraform_state"
     region          = "us-west-2"
   }
