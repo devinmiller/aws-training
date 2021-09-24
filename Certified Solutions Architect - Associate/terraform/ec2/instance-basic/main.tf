@@ -153,6 +153,7 @@ resource "aws_instance" "cotb_dev_web_01" {
 output "ec2" {
   value = {
     "ami": data.aws_ami.amz_linux.id,
+    "root_volume": aws_instance.cotb_dev_web_01.root_block_device.0.volume_id
     "instance_arn": aws_instance.cotb_dev_web_01.arn
     "public_dns": aws_instance.cotb_dev_web_01.public_dns
     "public_ip": aws_instance.cotb_dev_web_01.public_ip
