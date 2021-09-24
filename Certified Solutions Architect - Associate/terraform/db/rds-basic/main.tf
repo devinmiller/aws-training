@@ -31,17 +31,19 @@ resource "aws_db_instance" "cotb_dev_mysql_db" {
   engine               = "mysql"
   # The engine version to use.
   engine_version       = "5.7"
+  # The name of the RDS instance
+  identifier           = "cotb-dev-db"
   # The instance type of the RDS instance.
   instance_class       = "db.t3.micro"
   # The name of the database to create when the DB instance is created.
-  name                 = "mysql"
+  name                 = "demo"
   # Specifies if the RDS instance is multi-AZ
   multi_az             = var.multi_az 
   # Username for the master DB user.
   username             = "foo"
   # Password for the master DB user.
   password             = "foobarbaz"
-
+  # Name of the DB parameter group to associate.
   parameter_group_name = "default.mysql5.7"
   # Determines whether a final DB snapshot is created before the DB instance is deleted.
   skip_final_snapshot  = true
