@@ -35,9 +35,11 @@ Amazon Route 53 is a highly available and scalable Domain Name System (DNS) web 
   - Failover Routing
     - Use to configure active-passive failover based on a health check
   - Geolocation Routing
-    - Route traffic based on the location of resources and, optionally, shift traffic between locations
+    - Route traffic based on the location of clients
   - Geoproximity Route (Traffic Flow Only)
+    - Route traffic based on the location of resources and, optionally, shift traffic between locations
   - Multivalue Answer Routing
+    - Use Route 53 to respond to DNS queries with up to eight healthy records selected at random
 - Health Checks
   - You can set health checks on individual record sets
   - If a record set fails a health check it will be removed form Route53 until it passes again
