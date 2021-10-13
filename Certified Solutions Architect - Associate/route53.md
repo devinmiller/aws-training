@@ -8,6 +8,25 @@ Amazon Route 53 is a highly available and scalable Domain Name System (DNS) web 
 - Route internet traffic to the resources for your domain
 - Check the health of your resources
 
+[What is Route 53?](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/Welcome.html)
+
+## DNS Record Types
+
+- A
+  - You use an A record to route traffic to a resource, such as a web server, using an IPv4 address in dotted decimal notation.
+- CNAME
+  - A CNAME record maps DNS queries for the name of the current record, such as acme.example.com, to another domain (example.com or example.net) or subdomain (acme.example.com or zenith.example.org). 
+- MX
+  - An MX record specifies the names of your mail servers and, if you have two or more mail servers, the priority order. Each value for an MX record contains two values, priority and domain name. 
+- NS
+  - An NS record identifies the name servers for the hosted zone.
+- PTR
+  - A PTR record maps an IP address to the corresponding domain name.
+- SOA
+  - A start of authority (SOA) record provides information about a domain and the corresponding Amazon Route 53 hosted zone.
+- TXT
+  - A TXT record contains one or more strings that are enclosed in double quotation marks (").
+
 ## Exam Tips
 
 - DNS
