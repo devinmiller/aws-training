@@ -18,3 +18,19 @@ The following are the key concepts for VPCs:
   - Enables you to privately connect your VPC to supported AWS services and VPC endpoint services powered by PrivateLink without requiring an internet gateway, NAT device, VPN connection, or AWS Direct Connect connection.
 - CIDR block
   - Classless Inter-Domain Routing. An internet protocol address allocation and route aggregation methodology.
+
+## Exam Tips
+
+- VPC
+  - Think of a VPC as a logical datacenter in AWS
+  - Consists of the follow:
+    - Internet Gateways (or Virtual Private Gateways)
+    - Route Tables
+    - Network Access Control Lists
+    - Subnets
+    - Security Groups
+  - 1 Subnet = 1 Availability Zone
+  - Security Groups are Stateful
+  - Network Access Control Lists are Stateless
+  - **NO TRANSITIVE PEERING**
+  
