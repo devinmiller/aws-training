@@ -15,21 +15,6 @@ terraform {
 
 # Configure the AWS Provider
 provider "aws" {
-  region  = "us-west-2"
-  alias   = "uswest2"
-}
-
-provider "aws" {
-  region  = "us-east-2"
-  alias   = "useast2"
-}
-
-provider "aws" {
-  region  = "eu-west-2"
-  alias   = "euwest2"
-}
-
-provider "aws" {
   region = "us-west-2"
 }
 
@@ -44,9 +29,5 @@ resource "aws_route53_record" "www" {
   name    = data.aws_route53_zone.route53_zone.name
   type    = "A"
   ttl     = "60"
-  records = [
-    aws_instance.cotb_dev_web_usw2.public_ip,
-    aws_instance.cotb_dev_web_use2.public_ip,
-    aws_instance.cotb_dev_web_euw2.public_ip
-  ]
+  records = aws_instance.cotb_dev_web.*.public_ip
 }

@@ -27,6 +27,42 @@ Amazon Route 53 is a highly available and scalable Domain Name System (DNS) web 
 - TXT
   - A TXT record contains one or more strings that are enclosed in double quotation marks (").
 
+[DNS Record Types](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/ResourceRecordTypes.html)
+
+## Routing Policies
+
+When you create a record, you choose a routing policy, which determines how Amazon Route 53 responds to queries: 
+
+- Simple Routing
+  - Use for a single resource that performs a given function for your domain, for example, a web server that serves content for the example.com website. 
+- Failover Routing
+  - Use when you want to configure active-passive failover. 
+- Geolocation Routing
+  - Use when you want to route traffic based on the location of your users. 
+- Geoproximity Routing
+  - Use when you want to route traffic based on the location of your resources and, optionally, shift traffic from resources in one location to resources in another
+- Latency Routing
+  - Use when you have resources in multiple AWS Regions and you want to route traffic to the Region that provides the best latency with less round-trip time. 
+- Multivalue Answer Routing
+  - Use when you want Route 53 to respond to DNS queries with up to eight healthy records selected at random. 
+- Weighted Routing
+  - Use to route traffic to multiple resources in proportions that you specify. 
+
+[Choosing a Routing Policy](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy.html)
+
+## Health Checks
+
+You can create the following types of Amazon Route 53 health checks:
+
+- Health checks that monitor an endpoint
+  - You can configure a health check that monitors an endpoint that you specify either by IP address or by domain name. 
+- Health checks that monitor other health checks (calculated health checks)
+  - You can create a health check that monitors whether Route 53 considers other health checks healthy or unhealthy.
+- Health checks that monitor CloudWatch alarms
+  - You can create CloudWatch alarms that monitor the status of CloudWatch metrics, such as the number of throttled read events for an Amazon DynamoDB database or the number of Elastic Load Balancing hosts that are considered healthy.
+- Amazon Route 53 Application Recovery Controller
+  - Amazon Route 53 Application Recovery Controller gives you insights into whether your applications and resources are ready for recovery, and helps you manage and coordinate failover.
+
 ## Exam Tips
 
 - DNS
