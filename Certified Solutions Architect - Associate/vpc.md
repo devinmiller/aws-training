@@ -33,4 +33,7 @@ The following are the key concepts for VPCs:
   - Security Groups are Stateful
   - Network Access Control Lists are Stateless
   - **NO TRANSITIVE PEERING**
-  
+- Custom VPC
+  - Amazon always reserves 5 IP addresses with each subnet
+  - There can only be 1 internet gateway per VPC
+  - Security Groups can't span VPCs

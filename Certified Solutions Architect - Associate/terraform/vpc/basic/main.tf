@@ -18,6 +18,11 @@ provider "aws" {
   region = "us-west-2"
 }
 
+variable ssh_key {
+  type = string
+  default = "cotb-ssh-key-pair"
+  description = "Name of the SSH key pair to use with instance"
+}
 
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc
 resource "aws_vpc" "cotb_dev_vpc" {
@@ -35,26 +40,21 @@ resource "aws_internet_gateway" "cotb_dev_igw" {
   vpc_id = aws_vpc.cotb_dev_vpc.id
 }
 
-# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table
-resource "aws_route_table" "cotb_dev_route_table" {
-  vpc_id = aws_vpc.cotb_dev_vpc.id
+resource "aws_eip" "cotb_dev_ngw_eip" {
+  vpc      = true
+}
+
+resource "aws_nat_gateway" "cotb_dev_ngw" {
+  allocation_id     = aws_eip.cotb_dev_ngw_eip.id
+  subnet_id         = aws_subnet.cotb_dev_subnet_public.id
 
   tags = {
-    Name = "cotb-dev-route-table"
+    Name = "cotb-dev-ngw"
   }
-}
 
-# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route
-resource "aws_route" "cotb_dev_route_igw" {
-  route_table_id          = aws_route_table.cotb_dev_route_table.id
-  destination_cidr_block  = "0.0.0.0/0"
-  gateway_id              = aws_internet_gateway.cotb_dev_igw.id
-}
-
-# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table_association
-resource "aws_route_table_association" "public_subnet_route_table" {
-  subnet_id      = aws_subnet.cotb_dev_subnet_public.id
-  route_table_id = aws_route_table.cotb_dev_route_table.id
+  # To ensure proper ordering, it is recommended to add an explicit dependency
+  # on the Internet Gateway for the VPC.
+  depends_on = [aws_internet_gateway.cotb_dev_igw]
 }
 
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet
@@ -65,6 +65,8 @@ resource "aws_subnet" "cotb_dev_subnet_private" {
   cidr_block = "10.0.1.0/24"
   # The AZ for the subnet
   availability_zone = "us-west-2a"
+  # Specify true to indicate that instances launched into the subnet should be assigned a public IP address
+  map_public_ip_on_launch = false # Default is false
 
   tags = {
     Name = "cotb-dev-private"
