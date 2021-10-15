@@ -29,9 +29,32 @@ resource "aws_vpc" "cotb_dev_vpc" {
   }
 }
 
-resource "aws_internet_gateway" "internet_gateway" {
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/internet_gateway
+resource "aws_internet_gateway" "cotb_dev_igw" {
   # The VPC ID to create in
   vpc_id = aws_vpc.cotb_dev_vpc.id
+}
+
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table
+resource "aws_route_table" "cotb_dev_route_table" {
+  vpc_id = aws_vpc.cotb_dev_vpc.id
+
+  tags = {
+    Name = "cotb-dev-route-table"
+  }
+}
+
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route
+resource "aws_route" "cotb_dev_route_igw" {
+  route_table_id          = aws_route_table.cotb_dev_route_table.id
+  destination_cidr_block  = "0.0.0.0/0"
+  gateway_id              = aws_internet_gateway.cotb_dev_igw.id
+}
+
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table_association
+resource "aws_route_table_association" "public_subnet_route_table" {
+  subnet_id      = aws_subnet.cotb_dev_subnet_public.id
+  route_table_id = aws_route_table.cotb_dev_route_table.id
 }
 
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet
