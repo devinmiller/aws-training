@@ -39,7 +39,7 @@ DOC
 # restart nginx
 sudo systemctl start nginx
 # automatically add books to calibre
-cat > /etc/systemd/system/calibre <<DOC
+cat > /etc/cron.d/calibre <<DOC
 */5 * * * * calibre calibredb add /library/to-add -r --with-library /library && rm -r /library/to-add/*
 DOC
 # enable calibre-web as a service
