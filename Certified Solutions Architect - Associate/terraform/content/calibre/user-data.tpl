@@ -32,12 +32,13 @@ server {
     proxy_set_header        Host            $http_host;
     proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header        X-Scheme        https;
-    proxy_set_header        X-Script-Name   /;  # IMPORTANT: path has NO trailing slash 
   }
 }
 DOC
 # restart nginx
 sudo systemctl start nginx
+# configure certbot
+certbot run -m "devinmiller@codeonthebrain.com" -d ${domain} --nginx
 # automatically add books to calibre
 cat > /etc/cron.d/calibre <<DOC
 */5 * * * * calibre calibredb add /library/to-add -r --with-library /library && rm -r /library/to-add/*
