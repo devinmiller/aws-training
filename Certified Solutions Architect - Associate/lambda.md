@@ -4,6 +4,14 @@ AWS Lambda is a serverless compute service that runs your code in response to ev
 
 ## Features
 
+- Concurrency and scaling controls
+- Functions defined as container images
+- Code signing 
+- Lambda extensions
+- Function blueprints
+- Database access
+- File systems access
+
 ## Exam Tips
 
 - Lambda scales out (not up) automatically
