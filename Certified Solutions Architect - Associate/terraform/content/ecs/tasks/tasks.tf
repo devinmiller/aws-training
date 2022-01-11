@@ -1,8 +1,3 @@
-# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecs_cluster
-resource "aws_ecs_cluster" "cotb_dev_cluster" {
-  name = "cotb-dev-cluster"
-} 
-
 # resource "aws_ecs_task_definition" "sample_task_one" {
 #   # A unique name for your task definition
 #   family = "sample-task-one"

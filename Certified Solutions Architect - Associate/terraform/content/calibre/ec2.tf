@@ -26,7 +26,7 @@ resource "aws_instance" "cotb_dev_web_calibre" {
   # Key name of the Key Pair to use for the instance
   key_name                    = var.ssh_key
   #  User data to provide when launching the instance
-  user_data_base64            = base64encode(templatefile("${path.module}/user-data.tpl", {nfs = aws_efs_file_system.cotb_dev_calibre_file_system.dns_name}))
+  user_data_base64            = base64encode(templatefile("${path.module}/user-data.tpl", {nfs = aws_efs_file_system.cotb_dev_calibre_file_system.dns_name, domain = "calibre.cotb.dev"}))
   # VPC Subnet ID to launch in
   subnet_id = aws_subnet.cotb_dev_subnet_public.id
   #  A list of security group IDs to associate with

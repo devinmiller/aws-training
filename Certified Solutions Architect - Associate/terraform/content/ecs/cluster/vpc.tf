@@ -29,6 +29,13 @@ resource "aws_vpc" "cotb_cluster_vpc" {
   }
 }
 
+output "cotb_cluster_vpc" {
+    value = {
+        id = aws_vpc.cotb_cluster_vpc.id
+        arn = aws_vpc.cotb_cluster_vpc.arn
+    }
+}
+
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/internet_gateway
 resource "aws_internet_gateway" "cotb_cluster_igw" {
   # The VPC ID to create in
