@@ -17,3 +17,23 @@ terraform {
 provider "aws" {
   region = "us-west-2"
 }
+
+data "terraform_remote_state" "cluster" {  
+  backend = "s3"
+  config = {    
+    bucket          = "cotb.terraform"  
+    key             = "aws-training/content/ecs/cluster.tfstate"
+    dynamodb_table  = "aws_cotb_dev_terraform_state"
+    region          = "us-west-2"
+  }
+}
+
+data "terraform_remote_state" "instances" {  
+  backend = "s3"
+  config = {    
+    bucket          = "cotb.terraform"  
+    key             = "aws-training/content/ecs/instances.tfstate"
+    dynamodb_table  = "aws_cotb_dev_terraform_state"
+    region          = "us-west-2"
+  }
+}

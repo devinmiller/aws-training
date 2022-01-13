@@ -64,6 +64,10 @@ resource "aws_subnet" "cotb_cluster_public_subnets" {
   }
 }
 
+output "cotb_cluster_public_subnets" {
+  value = aws_subnet.cotb_cluster_public_subnets[*].id
+}
+
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet
 resource "aws_subnet" "cotb_cluster_private_subnets" {
   count = 3

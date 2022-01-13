@@ -22,7 +22,6 @@ data "aws_ami" "amzn2_ami_ecs" {
 resource "aws_instance" "cotb_cluster_instance" {
   count = 3
 
-  depends_on                  = [aws_ecs_cluster.cotb_dev_cluster]
   # AMI to use for the instance.
   ami                         = data.aws_ami.amzn2_ami_ecs.id
   # Whether to associate a public IP address with an instance in a VPC
@@ -36,7 +35,7 @@ resource "aws_instance" "cotb_cluster_instance" {
   # Key name of the Key Pair to use for the instance
   key_name                    = var.ssh_key
   # VPC Subnet ID to launch in
-  subnet_id = aws_subnet.cotb_cluster_public_subnets[count.index].id
+  subnet_id = data.terraform_remote_state.cluster.outputs.cotb_cluster_public_subnets[count.index]
   # A list of security group IDs to associate with
   vpc_security_group_ids = [ aws_security_group.cotb_cluster_public_sg.id ]
   # IAM Instance Profile to launch the instance with.
@@ -44,7 +43,7 @@ resource "aws_instance" "cotb_cluster_instance" {
 
   user_data = <<-EOF
     #!/bin/bash
-    echo ECS_CLUSTER=${aws_ecs_cluster.cotb_dev_cluster.name} >> /etc/ecs/ecs.config
+    echo ECS_CLUSTER=cotb-dev-cluster >> /etc/ecs/ecs.config
     EOF
 
   root_block_device {

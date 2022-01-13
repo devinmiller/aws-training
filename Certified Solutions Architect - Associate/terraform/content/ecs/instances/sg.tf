@@ -3,11 +3,15 @@ resource "aws_security_group" "cotb_cluster_public_sg" {
   # Name of the security group
   name = "cotb-cluster-public-sg"
   # VPC ID
-  vpc_id = aws_vpc.cotb_cluster_vpc.id
+  vpc_id = data.terraform_remote_state.cluster.outputs.cotb_cluster_vpc.id
 
   tags = {
     "Name" = "cotb-cluster-public-sg"
   }
+}
+
+output "cotb_cluster_public_sg" {
+  value = aws_security_group.cotb_cluster_public_sg.id
 }
 
 # Create an inbound rule allowing HTTP traffic
@@ -45,7 +49,7 @@ resource "aws_security_group" "cotb_cluster_ssh_sg" {
   # Name of the security group
   name = "cotb-cluster-ssh-sg"
   # VPC ID
-  vpc_id = aws_vpc.cotb_cluster_vpc.id
+  vpc_id = data.terraform_remote_state.cluster.outputs.cotb_cluster_vpc.id
 
   ingress {
     from_port         = 22
@@ -71,7 +75,7 @@ resource "aws_security_group" "cotb_cluster_nfs_sg" {
   # Name of the security group
   name = "cotb-cluster-nfs-sg"
   # VPC ID
-  vpc_id = aws_vpc.cotb_cluster_vpc.id
+  vpc_id = data.terraform_remote_state.cluster.outputs.cotb_cluster_vpc.id
 
   ingress {
     from_port         = 2049
