@@ -55,6 +55,12 @@ resource "aws_ecs_service" "load_balancer_service" {
     # Assign a public IP address to the ENI.
     assign_public_ip = false
   }
+
+  load_balancer {
+    target_group_arn = aws_lb_target_group.cotb_cluster_lb_tg.arn
+    container_port = "80"
+    container_name = "load-balancer"
+  }
 }
 
 resource "aws_ecs_task_definition" "sample_task_one" {
