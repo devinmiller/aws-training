@@ -24,6 +24,33 @@ resource "aws_security_group_rule" "allow_http_in" {
   security_group_id = aws_security_group.cotb_cluster_public_sg.id
 }
 
+resource "aws_security_group_rule" "allow_http_in_health" {
+  type              = "ingress"
+  from_port         = 8404
+  to_port           = 8404
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.cotb_cluster_public_sg.id
+}
+
+resource "aws_security_group_rule" "allow_http_in_task_one" {
+  type              = "ingress"
+  from_port         = 8080
+  to_port           = 8080
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.cotb_cluster_public_sg.id
+}
+
+resource "aws_security_group_rule" "allow_http_in_task_two" {
+  type              = "ingress"
+  from_port         = 8081
+  to_port           = 8081
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.cotb_cluster_public_sg.id
+}
+
 # Create an inbound rule allowing HTTPS traffic
 resource "aws_security_group_rule" "allow_https_in" {
   type              = "ingress"
@@ -68,6 +95,10 @@ resource "aws_security_group" "cotb_cluster_ssh_sg" {
   tags = {
     "Name" = "cotb-cluster-ssh-sg"
   }
+}
+
+output cotb_cluster_ssh_sg {
+  value = aws_security_group.cotb_cluster_ssh_sg.id
 }
 
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group

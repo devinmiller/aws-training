@@ -18,6 +18,12 @@ provider "aws" {
   region = "us-west-2"
 }
 
+variable ssh_key {
+  type = string
+  default = "work-ssh-key-pair"
+  description = "Name of the SSH key pair to use with instance"
+}
+
 data "terraform_remote_state" "cluster" {  
   backend = "s3"
   config = {    

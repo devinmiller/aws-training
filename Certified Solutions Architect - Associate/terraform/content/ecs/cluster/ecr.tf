@@ -15,6 +15,22 @@ output "cotb_cluster_registry_one" {
 }
 
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecr_repository
+resource "aws_ecr_repository" "cotb_cluster_registry_two" {
+  # Name of the repository.
+  name                 = "sample-registry-two"
+  # The tag mutability setting for the repository.
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = false
+  }
+}
+
+output "cotb_cluster_registry_two" {
+  value = aws_ecr_repository.cotb_cluster_registry_two.repository_url
+}
+
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecr_repository
 resource "aws_ecr_repository" "cotb_cluster_registry_lb" {
   # Name of the repository.
   name                 = "load-balancer-registry"

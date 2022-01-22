@@ -1,3 +1,7 @@
-FROM haproxy:latest
+FROM haproxytech/haproxy-ubuntu:latest
+
+EXPOSE 80
+EXPOSE 443
+EXPOSE 8404
 
 COPY haproxy.cfg /usr/local/etc/haproxy/haproxy.cfg
